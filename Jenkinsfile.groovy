@@ -36,6 +36,8 @@ node('master')
     echo 'AdditionalGenerateArguments = ' + params.AdditionalGenerateArguments
     echo 'AdditionalBuildArguments = ' + params.AdditionalBuildArguments
 
+    manager.addShortText("${manager.build.buildVariables.get('CheckoutDirectory')}", "black", "white", "0px", "white")
+    
     addCheckoutSourcesStage()
     addBuildStage()
 }
