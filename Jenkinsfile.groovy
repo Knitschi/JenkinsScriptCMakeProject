@@ -44,7 +44,7 @@ def addCheckoutSourcesStage()
             checkout([$class: 'GitSCM',
                 userRemoteConfigs: [[url: params.RepositoryUrl]],
                 branches: [[name: 'master']],
-                extensions: [[$class: 'CleanBeforeCheckout']]
+                extensions: [[$class: 'CleanBeforeCheckout']]]
             )
 
             // Stash source files for the build slaves
