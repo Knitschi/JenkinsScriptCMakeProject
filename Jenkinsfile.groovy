@@ -42,7 +42,7 @@ node('master')
 
 def addCheckoutSourcesStage()
 {
-    stage('Prepare Sources')
+    stage('Checkout')
     {
         ws(params.CheckoutDirectory)
         {
@@ -62,25 +62,28 @@ def addCheckoutSourcesStage()
 
 def addBuildStage()
 {
-    node(params.BuildSlaveTag)
+    stage('Build')
     {
-        // acquiering an extra workspace seems to be necessary to prevent interaction between
-        // the parallel run nodes, although node() should already create an own workspace.
-        ws(params.CheckoutDirectory)   
-        {   
-            // clean the workspace
-            dir(params.CheckoutDirectory)
-            {
-                deleteDir()
+        node(params.BuildSlaveTag)
+        {
+            // acquiering an extra workspace seems to be necessary to prevent interaction between
+            // the parallel run nodes, although node() should already create an own workspace.
+            ws(params.CheckoutDirectory)   
+            {   
+                // clean the workspace
+                dir(params.CheckoutDirectory)
+                {
+                    deleteDir()
+                }
+                
+                // Unstash the repository content
+                unstash SOURCES_STASH
+           
+                runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
+                runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
+                
+                echo '----- CMake project was build successfully -----'
             }
-            
-            // Unstash the repository content
-            unstash SOURCES_STASH
-       
-            runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
-            runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
-            
-            echo '----- CMake project was build successfully -----'
         }
     }
 }
