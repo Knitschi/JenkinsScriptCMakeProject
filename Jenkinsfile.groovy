@@ -29,6 +29,13 @@ class Constants {
 // This node is the driver for the subjobs
 node('master')
 {
+    echo '----- Build CMake project -----'
+    echo 'RepositoryUrl = ' + params.RepositoryUrl
+    echo 'CheckoutDirectory = ' + params.CheckoutDirectory
+    echo 'BuildSlaveTag = ' + params.BuildSlaveTag
+    echo 'AdditionalGenerateArguments = ' + params.AdditionalGenerateArguments
+    echo 'AdditionalBuildArguments = ' + params.AdditionalBuildArguments
+
     addCheckoutSourcesStage()
     addBuildStage()
 }
@@ -73,7 +80,7 @@ def addBuildStage()
             runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
             runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
             
-            echo '----- CMake project was build successfully' + toolchain + '. -----'
+            echo '----- CMake project was build successfully -----'
         }
     }
 }
