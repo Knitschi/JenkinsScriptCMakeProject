@@ -68,7 +68,7 @@ def addBuildStage()
             }
             
             // Unstash the repository content
-            unstashFiles(SOURCES_STASH, '')
+            unstash SOURCES_STASH
        
             runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
             runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
