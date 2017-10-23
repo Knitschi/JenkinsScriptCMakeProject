@@ -29,12 +29,16 @@ class Constants {
 // This node is the driver for the subjobs
 node('master')
 {
-    echo '----- Build CMake project -----'
-    echo 'RepositoryUrl = ' + params.RepositoryUrl + '\n'\
-'CheckoutDirectory = ' + params.CheckoutDirectory + '\n'\
-'BuildSlaveTag = ' + params.BuildSlaveTag + '\n'\
-'AdditionalGenerateArguments = ' + params.AdditionalGenerateArguments + '\n'\
-'AdditionalBuildArguments = ' + params.AdditionalBuildArguments + '\n'
+    def introduction = '''
+----- Build CMake project -----
+RepositoryUrl = ${params.RepositoryUrl}
+CheckoutDirectory = ${params.CheckoutDirectory}
+BuildSlaveTag = ${params.BuildSlaveTag}
+AdditionalGenerateArguments = ${params.AdditionalGenerateArguments}
+AdditionalBuildArguments = ${params.AdditionalBuildArguments}
+'''
+    
+    echo introduction
 
     //manager.addShortText("${manager.build.buildVariables.get('CheckoutDirectory')}", "black", "white", "0px", "white")
     
