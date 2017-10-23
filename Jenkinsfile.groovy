@@ -38,7 +38,7 @@ AdditionalGenerateArguments = ${params.AdditionalGenerateArguments}
 AdditionalBuildArguments = ${params.AdditionalBuildArguments}
 '''
     
-    echo introduction
+    println introduction
     
     addCheckoutSourcesStage()
     addBuildStage()
