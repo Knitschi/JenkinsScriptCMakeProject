@@ -30,13 +30,15 @@ class Constants {
 node('master')
 {
     echo '----- Build CMake project -----'
-    echo 'RepositoryUrl = ' + params.RepositoryUrl
-    echo 'CheckoutDirectory = ' + params.CheckoutDirectory
-    echo 'BuildSlaveTag = ' + params.BuildSlaveTag
-    echo 'AdditionalGenerateArguments = ' + params.AdditionalGenerateArguments
-    echo 'AdditionalBuildArguments = ' + params.AdditionalBuildArguments
+    echo 'RepositoryUrl = ' + params.RepositoryUrl + '\n'\
+'CheckoutDirectory = ' + params.CheckoutDirectory + '\n'\
+'BuildSlaveTag = ' + params.BuildSlaveTag + '\n'\
+'AdditionalGenerateArguments = ' + params.AdditionalGenerateArguments + '\n'\
+'AdditionalBuildArguments = ' + params.AdditionalBuildArguments + '\n'
 
-    manager.addShortText("${manager.build.buildVariables.get('CheckoutDirectory')}", "black", "white", "0px", "white")
+    //manager.addShortText("${manager.build.buildVariables.get('CheckoutDirectory')}", "black", "white", "0px", "white")
+    
+    manager.build.setDisplayName(manager.build.getDisplayName() + " " + manager.build.buildVariables.get('MyParameter'))
     
     addCheckoutSourcesStage()
     addBuildStage()
