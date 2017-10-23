@@ -39,10 +39,6 @@ AdditionalBuildArguments = ${params.AdditionalBuildArguments}
 '''
     
     echo introduction
-
-    //manager.addShortText("${manager.build.buildVariables.get('CheckoutDirectory')}", "black", "white", "0px", "white")
-    
-    manager.build.setDisplayName(manager.build.getDisplayName() + " " + manager.build.buildVariables.get('MyParameter'))
     
     addCheckoutSourcesStage()
     addBuildStage()
