@@ -27,9 +27,16 @@ class Constants {
 }
 
 // This node is the driver for the subjobs
-node('master')
+addCheckoutSourcesStage()
+addBuildStage()
+
+
+def addCheckoutSourcesStage()
 {
-    def introduction = """
+    stage('Checkout')
+    {
+    
+        def introduction = """
 ----- Build CMake project -----
 RepositoryUrl = ${params.RepositoryUrl}
 CheckoutDirectory = ${params.CheckoutDirectory}
@@ -41,26 +48,21 @@ AdditionalBuildArguments = ${params.AdditionalBuildArguments}
     
     echo introduction
     
-    addCheckoutSourcesStage()
-    addBuildStage()
-}
-
-def addCheckoutSourcesStage()
-{
-    stage('Checkout')
-    {
-        ws(params.CheckoutDirectory)
+        node('master')
         {
-            // We do another clone/checkout because the checkout that is used to checkout this scipt ends up in a different directory. 
-            // We also want to perform a clean checkout here.
-            checkout([$class: 'GitSCM',
-                userRemoteConfigs: [[url: params.RepositoryUrl]],
-                branches: [[name: 'master']],
-                extensions: [[$class: 'CleanBeforeCheckout']]]
-            )
+            ws(params.CheckoutDirectory)
+            {
+                // We do another clone/checkout because the checkout that is used to checkout this scipt ends up in a different directory. 
+                // We also want to perform a clean checkout here.
+                checkout([$class: 'GitSCM',
+                    userRemoteConfigs: [[url: params.RepositoryUrl]],
+                    branches: [[name: 'master']],
+                    extensions: [[$class: 'CleanBeforeCheckout']]]
+                )
 
-            // Stash source files for the build slaves
-            stash includes: '**', name: SOURCES_STASH
+                // Stash source files for the build slaves
+                stash includes: '**', name: SOURCES_STASH
+            }
         }
     }
 }
