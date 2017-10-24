@@ -32,14 +32,14 @@ node('master')
 
     def url = params.RepositoryUrl
     
-    def introduction = '''
+    def introduction = """
 ----- Build CMake project -----
 RepositoryUrl = ${url}
 CheckoutDirectory = ${params.CheckoutDirectory}
 BuildSlaveTag = ${params.BuildSlaveTag}
 AdditionalGenerateArguments = ${params.AdditionalGenerateArguments}
 AdditionalBuildArguments = ${params.AdditionalBuildArguments}
-'''
+"""
     
     println introduction
     
