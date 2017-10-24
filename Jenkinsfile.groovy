@@ -29,19 +29,17 @@ class Constants {
 // This node is the driver for the subjobs
 node('master')
 {
-
-    def url = params.RepositoryUrl
-    
     def introduction = """
 ----- Build CMake project -----
-RepositoryUrl = ${url}
+RepositoryUrl = ${params.RepositoryUrl}
 CheckoutDirectory = ${params.CheckoutDirectory}
 BuildSlaveTag = ${params.BuildSlaveTag}
 AdditionalGenerateArguments = ${params.AdditionalGenerateArguments}
 AdditionalBuildArguments = ${params.AdditionalBuildArguments}
+-------------------------------
 """
     
-    println introduction
+    echo introduction
     
     addCheckoutSourcesStage()
     addBuildStage()
