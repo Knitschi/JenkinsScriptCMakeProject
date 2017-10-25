@@ -19,24 +19,39 @@ AdditionalBuildArguments        - Arguments for the cmake build call.
 
 */
 
-import static Constants.*
 
-class Constants {
-    // stash names
-    static final SOURCES_STASH = "SourcesStash"
+stage('Build')
+{
+    node(params.BuildSlaveTag)
+    {
+        // acquiering an extra workspace seems to be necessary to prevent interaction between
+        // the parallel run nodes, although node() should already create an own workspace.
+        ws(params.CheckoutDirectory)   
+        {   
+            // debug info
+            printJobParameter()
+        
+            // checkout sources
+            checkout([$class: 'GitSCM',
+                userRemoteConfigs: [[url: params.RepositoryUrl]],
+                branches: [[name: 'master']],
+                extensions: [[$class: 'CleanBeforeCheckout']]]
+            )
+       
+            // run cmake generate and build
+            runCommand( 'cmake -E remove_directory _build')                             // make sure the build is clean
+            runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
+            runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
+            
+            echo '----- CMake project was build successfully -----'
+        }
+    }
 }
 
-// This node is the driver for the subjobs
-addCheckoutSourcesStage()
-addBuildStage()
 
-
-def addCheckoutSourcesStage()
+def printJobParameter()
 {
-    stage('Checkout')
-    {
-    
-        def introduction = """
+    def introduction = """
 ----- Build CMake project -----
 RepositoryUrl = ${params.RepositoryUrl}
 CheckoutDirectory = ${params.CheckoutDirectory}
@@ -47,53 +62,6 @@ AdditionalBuildArguments = ${params.AdditionalBuildArguments}
 """
     
     echo introduction
-    
-        node('master')
-        {
-            ws(params.CheckoutDirectory)
-            {
-                // We do another clone/checkout because the checkout that is used to checkout this scipt ends up in a different directory. 
-                // We also want to perform a clean checkout here.
-                checkout([$class: 'GitSCM',
-                    userRemoteConfigs: [[url: params.RepositoryUrl]],
-                    branches: [[name: 'master']],
-                    extensions: [[$class: 'CleanBeforeCheckout']]]
-                )
-
-                // Stash source files for the build slaves
-                stash includes: '**', name: SOURCES_STASH
-            }
-        }
-    }
-}
-
-def addBuildStage()
-{
-    stage('Build')
-    {
-        node(params.BuildSlaveTag)
-        {
-            // acquiering an extra workspace seems to be necessary to prevent interaction between
-            // the parallel run nodes, although node() should already create an own workspace.
-            ws(params.CheckoutDirectory)   
-            {   
-                // clean the workspace
-                dir(params.CheckoutDirectory)
-                {
-                    deleteDir()
-                }
-                
-                // Unstash the repository content
-                unstash SOURCES_STASH
-           
-                runCommand( 'cmake -E remove_directory _build')                             // make sure the build is clean
-                runCommand( 'cmake -H. -B_build ' + params.AdditionalGenerateArguments )
-                runCommand( 'cmake --build _build ' + params.AdditionalBuildArguments )
-                
-                echo '----- CMake project was build successfully -----'
-            }
-        }
-    }
 }
 
 def runCommand( command )
